@@ -1,0 +1,138 @@
+{% extends 'plantilla.html' %}
+
+{% block customCSS %}
+  <link rel="stylesheet" href="{{url_for('static', filename='css/estilos3.css')}}">
+{% endblock %}
+
+{% block body %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const btnChangePassword = document.getElementById("btnChangePassword");
+        const btnSamePassword = document.getElementById("btnSamePassword");
+        const passwordFields = document.getElementById("passwordFields");
+        const passwordConfirmFields = document.getElementById("passwordConfirmFields");
+        const passwordInput = document.querySelector("[name=txtpass]");
+        const passwordConfirmInput = document.querySelector("[name=txtpassw]");
+
+        btnChangePassword.addEventListener("click", function () {
+            passwordFields.style.display = "block";
+            passwordConfirmFields.style.display = "block";
+            btnChangePassword.setAttribute("disabled", "true");
+            btnSamePassword.removeAttribute("disabled");
+
+            // Borrar valores de los campos de contraseña
+            passwordInput.value = "";
+            passwordConfirmInput.value = "";
+        });
+
+        btnSamePassword.addEventListener("click", function () {
+            passwordFields.style.display = "none";
+            passwordConfirmFields.style.display = "none";
+            btnChangePassword.removeAttribute("disabled");
+            btnSamePassword.setAttribute("disabled", "true");
+
+            // Restaurar valores originales de los campos de contraseña
+            passwordInput.value = "{{med.6}}";
+            passwordConfirmInput.value = "{{med.6}}";
+        });
+    });
+</script>
+<div class="container">
+  <h1 class="text-center mt-3 fw-bold display-1 text-white">Actualizar Médico</h1>
+  <form action="/actualizar/{{med.0}}" method="POST" class="row g-3">
+    <div class="mt-5">
+        <a class="btn btn-warning" href="/ConsultarMedico">
+            <i class="bi bi-arrow-return-left"></i> Cancelar
+        </a>
+    </div>
+      {% with mensajes = get_flashed_messages() %}
+      {% if mensajes %}
+        <div class="col-12">
+            {% for msj in mensajes %}
+            <script>
+              {% if 'Las contraseñas no coinciden' in mensajes %}
+              Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Las contraseñas insertadas no coinciden!',
+              })
+              {% endif %}
+            </script>
+            <script>
+              {% if 'No se pueden actualizar campos vacios' in mensajes %}
+              Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'No se pueden guardar campos vacios!',
+              })
+              {% endif %}
+            </script>
+            {% endfor %}
+        </div>
+      {% endif %}
+      {% endwith %}
+      <div class="col-md-6">
+          <div class="card">
+              <div class="card-body">
+                  <div class="mb-3">
+                      <label class="form-label">Nombre:</label>
+                      <input type="text" class="form-control" name="txtNombre" value="{{ med.2 }}">
+                  </div>
+                  <div class="mb-3">
+                      <label class="form-label">Apellidos:</label>
+                      <input type="text" class="form-control" name="txtApellido" value="{{ med.3 }}">
+                  </div>
+                  <div class="mb-3">
+                      <label class="form-label">Cedula del médico:</label>
+                      <input class="form-control" name="txtcedula" value="{{ med.4 }}">
+                  </div>
+                  <div class="mb-3">
+                      <label class="form-label">RFC:</label>
+                      <input class="form-control" name="txtrfc" value="{{ med.1 }}">
+                  </div>
+              </div>
+          </div>
+      </div>
+      <div class="col-md-6">
+          <div class="card">
+              <div class="card-body">
+                  <div class="mb-3">
+                      <label class="form-label">Correo electrónico:</label>
+                      <input type="email" class="form-control" name="txtcorreo" value="{{ med.5 }}">
+                  </div>
+                  <div class="mb-3">
+                      <label class="form-label">Cambiar Contraseña:</label>
+                      <div class="d-flex">
+                          <button type="button" class="btn btn-warning me-2" id="btnChangePassword">Cambiar</button>
+                          <button type="button" class="btn btn-success" id="btnSamePassword">Misma contraseña</button>
+                      </div>
+                      <div class="mb-3" id="passwordFields" style="display: none;">
+                          <label class="form-label">Contraseña:</label>
+                          <input type="password" pattern=".{8,}" class="form-control" name="txtpass" placeholder="8 caracteres mínimo (Recomendado)">
+                      </div>
+                      <div class="mb-3" id="passwordConfirmFields" style="display: none;">
+                          <label class="form-label">Confirma Contraseña:</label>
+                          <input type="password" pattern=".{8,}" class="form-control" name="txtpassw" placeholder="Introduzca la misma que la anterior">
+                      </div>
+                  </div>
+                  <div class="mb-3">
+                      <label class="form-label">ROL del Médico:</label>
+                      <select class="form-select" name="txtrol" id="inputGroupSelect01">
+                          <option selected>Elegir...</option>
+                          <option value="1">Administrador</option>
+                          <option value="2">Médico normal</option>
+                      </select>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <div class="text-center mt-3">
+          <button type="submit" class="btn btn-primary">Actualizar</button>
+      </div>
+  </form>
+</div>
+    
+  {% endblock %}
+
+
+  

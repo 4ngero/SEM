@@ -1,0 +1,76 @@
+{% extends 'plantilla.html' %}
+
+{% block customCSS %}
+  <link rel="stylesheet" href="{{url_for('static', filename='css/estilos5.css')}}">
+{% endblock %}
+
+{% block body %}
+    {% with mensajes= get_flashed_messages()%}
+        {%if mensajes%}
+            {%for msj in mensajes%}
+                <script>
+                {% if 'La exploración y diagnóstico se guardó correctamente' in mensajes %}
+                    Swal.fire(
+                    'Exploracion y Diagnostico Generado!!',
+                    'La exploración y diagnostico se guardo correctamente!!',
+                    'success'
+                    );
+                {% endif %}
+                </script>
+                <script>
+                {% if 'No se pueden guardar campos vacíos' in mensajes %}
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'No se pueden guardar campos vacios!',
+                })
+                {% endif %}
+                </script>
+            {% endfor %}
+        {% endif %}
+    {% endwith%}
+
+
+<div class="container mt-5">    
+    <h3 class="text-center mt-3 mb-3 fw-bold display-1 text-white">Selecciona un paciente</h3>
+    <div class="text-center mt-3">
+        <a class="btn btn-warning mt-5 mb-3 mx-5 d-inline-block text-start" href="/ConsultorioMedico">
+            <i class="bi bi-arrow-return-left"></i> Regresar Inicio
+        </a>
+        <a class="btn btn-outline-info mt-5 mb-3 mx-5 d-inline-block text-center" href="/Exploracionpacie">Mostrar Todos los Registros</a>
+        <form action="/Exploracionpac" method="POST" class="search-form mt-3 mb-3 mx-5 d-inline-block text-end">
+            <input type="text" name="txtbuscar" placeholder="Buscar por Nombre..." required>
+            <button class="btn btn-success" type="submit">Buscar</button>
+        </form>
+    </div>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th scope="col">Nombre</th>
+                <th scope="col">Apellidos</th>
+                <th scope="col">Fecha de Nacimiento</th>
+                <th scope="col">Enfermedades Crónicas</th>
+                <th scope="col">Alergias</th>
+                <th scope="col">Antecedentes Familiares</th>
+                <th scope="col">Exploración y Diagnostico</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pac in listapacientes %}
+            <tr>
+                <td>{{ pac.2 }}</td>
+                <td>{{ pac.3 }}</td>
+                <td>{{ pac.4 }}</td>
+                <td>{{ pac.5 }}</td>
+                <td>{{ pac.6 }}</td>
+                <td>{{ pac.7 }}</td>
+                <td>
+                    <a class="btn btn-primary" href="/Exploracion/{{ pac.0 }}">Seleccionar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends 'plantilla.html' %}
+
+{% block customCSS %}
+  <link rel="stylesheet" href="{{url_for('static', filename='css/estilos3.css')}}">
+{% endblock %}
+
+{% block body %}
+    {% with mensajes = get_flashed_messages() %}
+        {% if mensajes %}
+            <script>
+                {% for msj in mensajes %}
+                    {% if 'El Médico se actualizó correctamente' in msj %}
+                        Swal.fire(
+                            'Médico actualizado!!',
+                            'Los datos del Médico han sido actualizados!!',
+                            'success'
+                        );
+                    {% endif %}
+                {% endfor %}
+            </script>
+        {% endif %}
+    {% endwith %}
+
+    <script>
+        function eliminarMedico(id) {
+            Swal.fire({
+                title: 'Estas seguro?',
+                text: "No podras revertir esto!!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#5a9b3d',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si, eliminar!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Realizar la petición para eliminar en la base de datos
+                    fetch(`/borrar/${id}`, {
+                        method: 'POST'
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        Swal.fire(
+                            'Médico eliminado!!',
+                            'El médico ha sido eliminado.',
+                            'success'
+                        ).then(() => {
+                            location.reload();
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire(
+                            'Error!',
+                            'Hubo un error al momento de eliminar.',
+                            'error'
+                        );
+                    });
+                }
+            });
+        }
+    </script>
+
+    <div class="container" id="consultaContainer">
+        <h1 class="text-center mt-3 fw-bold display-1 text-white">Consulta de Médicos</h1>
+        <div class="d-flex justify-content-between">
+            <a class="btn btn-warning mt-5" href="/ConsultorioMedico">
+                <i class="bi bi-arrow-return-left"></i> Regresar Inicio
+            </a>
+            <a class="btn btn-warning mt-5" href="/RegistroMedico">
+                Registrar Médico <i class="bi bi-arrow-return-right"></i>
+            </a>
+        </div>
+
+        <table class="table table-light table-hover table_id mt-3">
+            <div class="text-end">
+                <div class="text-center">
+                    <a class="btn btn-outline-info" href="/ConsultarMedico">Mostrar Todos los Registros</a>
+                </div>
+                <form action="/Consultanombre" method="POST" class="search-form mt-3">
+                    <input type="text" name="txtbuscar" placeholder="Buscar por Nombre..." required>
+                    <button class="btn btn-success" type="submit">Buscar</button>
+            </form>
+            </div>
+            <thead>
+                <tr>
+                    <th scope="col">Cedula</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Apellido</th>
+                    <th scope="col">RFC</th>
+                    <th scope="col">Correo electrónico</th>
+                    <th scope="col">ROL</th>
+                    <th scope="col">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for med in listamedico %}
+                    <tr>
+                        <td>{{ med.4 }}</td>
+                        <td>{{ med.2 }}</td>
+                        <td>{{ med.3 }}</td>
+                        <td>{{ med.1 }}</td>
+                        <td>{{ med.5 }}</td>
+                        <td>{{ med.7 }}</td>
+                        <td>
+                            <a class="btn btn-warning" href="/editar/{{ med.0 }}"><i class="bi bi-pencil-square"></i> Editar</a>
+                            <a class="btn btn-danger" onclick="eliminarMedico('{{ med.0 }}')"><i class="bi bi-trash-fill"></i> Borrar</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

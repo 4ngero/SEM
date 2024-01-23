@@ -1,0 +1,112 @@
+{% extends 'plantilla.html' %}
+
+{% block customCSS %}
+  <link rel="stylesheet" href="{{url_for('static', filename='css/estilos3.css')}}">
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+      <h1 class="text-center mt-3 mb-5 fw-bold display-1 text-white">Registrar Médico</h1>
+      <div class="btn-container d-flex justify-content-between mb-4">
+          <a class="btn btn-warning" href="/ConsultorioMedico">
+              <i class="bi bi-arrow-return-left"></i> Regresar Inicio
+          </a>
+          <a class="btn btn-warning" href="/ConsultarMedico">
+              Consultar Médico <i class="bi bi-arrow-return-right"></i>
+          </a>
+      </div>
+  
+      <form action="/RegistrarMedico" method="POST">
+            {% with mensajes= get_flashed_messages()%}
+                {%if mensajes%}
+                  {%for msj in mensajes%}
+                    <script>
+                      {% if 'El médico se guardo correctamente' in mensajes %}
+                        Swal.fire(
+                          'Médico Guardado!!',
+                          'Verifica en interfaz Consulta de Médico!!',
+                          'success'
+                        );
+                      {% endif %}
+                    </script>
+                    <script>
+                      {% if 'No se pueden guardar campos vacios' in mensajes %}
+                      Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'No se pueden guardar campos vacios!',
+                      })
+                      {% endif %}
+                    </script>
+                    <script>
+                      {% if 'Las contraseñas no coinciden, favor de reintentar' in mensajes %}
+                      Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Las contraseñas no coinciden, favor de reintentar!',
+                      })
+                      {% endif %}
+                    </script>
+                  {% endfor %}
+                {% endif %}
+            {% endwith%}
+            <div class="row justify-content-center">
+              <div class="col-md-6">
+                  <div class="card">
+                      <div class="card-body">
+                          <div class="mb-3">
+                              <label class="form-label">Nombre:</label>
+                              <input type="text" class="form-control" name="txtNombre" placeholder="Nombre">
+                          </div>
+                          <div class="mb-3">
+                              <label class="form-label">Apellidos:</label>
+                              <input type="text" class="form-control" name="txtApellido" placeholder="Apellidos">
+                          </div>
+                          <div class="mb-3">
+                              <label class="form-label">Cedula del médico:</label>
+                              <input class="form-control" name="txtcedula" placeholder="Cedula">
+                          </div>
+                          <div class="mb-3">
+                              <label class="form-label">RFC:</label>
+                              <input class="form-control" name="txtrfc" placeholder="RFC">
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              <div class="col-md-6">
+                  <div class="card">
+                      <div class="card-body">
+                          <div class="mb-3">
+                              <label class="form-label">Correo electronico:</label>
+                              <input type="email" class="form-control" name="txtcorreo" placeholder="Correo">
+                          </div>
+                          <div class="mb-3">
+                              <label class="form-label">Contraseña:</label>
+                              <input type="password" pattern=".{8,}" class="form-control" name="txtpass" placeholder="Contraseña (8 caracteres mínimo)">
+                          </div>
+                          <div class="mb-3">
+                              <label class="form-label">Confirma Contraseña:</label>
+                              <input type="password" pattern=".{8,}" class="form-control" name="txtpassw" placeholder="Confirma Contraseña">
+                          </div>
+                          <div class="mb-3">
+                              <label class="form-label">ROL del Médico</label>
+                              <select class="form-select" name="txtrol">
+                                  <option selected>Elegir...</option>
+                                  <option value="1">Administrador</option>
+                                  <option value="2">Médico normal</option>
+                              </select>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+  
+          <div class="text-center mt-3">
+              <button type="submit" class="btn btn-info">Registrar</button>
+          </div>
+      </form>
+  </div>
+  {% endblock %}
+
+
+  

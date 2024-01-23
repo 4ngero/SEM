@@ -1,0 +1,183 @@
+{% extends 'plantilla.html' %}
+
+{% block customCSS %}
+  <link rel="stylesheet" href="{{url_for('static', filename='css/estilos5.css')}}">
+{% endblock %}
+
+{% block body %}
+
+<script>
+    function mostrarOtroAlergia() {
+        var seleccion = document.getElementById("alergias").value;
+        var otraAlergiaDiv = document.getElementById("otraAlergia");
+        var otraAlergiaInput = document.getElementById("otraAlergiaInput");
+
+        if (seleccion === "Otro") {
+            otraAlergiaInput.setAttribute("name", "txtalergias_otro");
+            otraAlergiaDiv.style.display = "block";
+        } else {
+            otraAlergiaInput.setAttribute("name", "txtalergias");
+            otraAlergiaDiv.style.display = "none";
+        }
+    }
+</script>
+
+<script>
+    function mostrarOtraEnfermedad() {
+        var seleccion = document.getElementById("enfermedades").value;
+        var otraEnfermedadDiv = document.getElementById("otraEnfermedad");
+        var otraEnfermedadInput = document.getElementById("otraEnfermedadInput");
+    
+        if (seleccion === "Otra") {
+            otraEnfermedadInput.setAttribute("name", "txtenfermedades_otro");
+            otraEnfermedadDiv.style.display = "block";
+        } else {
+            otraEnfermedadInput.setAttribute("name", "txtenfermedades");
+            otraEnfermedadDiv.style.display = "none";
+        }
+    }
+</script>
+
+<script>
+    function mostrarOtroAntecedente() {
+        var seleccion = document.getElementById("antecedentes").value;
+        var otroAntecedenteDiv = document.getElementById("otroAntecedente");
+        var otroAntecedenteInput = document.getElementById("otroAntecedenteInput");
+    
+        if (seleccion === "Otro") {
+            otroAntecedenteInput.setAttribute("name", "txtantecedentes_otro");
+            otroAntecedenteDiv.style.display = "block";
+        } else {
+            otroAntecedenteInput.setAttribute("name", "txtantecedentes");
+            otroAntecedenteDiv.style.display = "none";
+        }
+    }
+</script>
+
+<div class="container mt-5">
+    <h1 class="text-center mt-3 fw-bold display-1 text-white">Actualizar Paciente</h1>
+    <div class="btn-container d-flex justify-content-between mb-4">
+        <a class="btn btn-warning" href="/Consultapaciente">
+            <i class="bi bi-arrow-return-left"></i> Cancelar 
+        </a>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <h2 class="text-center text-white">Datos Obligatorios</h2>
+            <form action="/actualizarpaciente/{{pac.0}}" method="POST">
+                {% with mensajes= get_flashed_messages()%}
+                    {%if mensajes%}
+                        {%for msj in mensajes%}
+                            <script>
+                            {% if 'No se pueden guardar campos vacíos' in mensajes %}
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'No se pueden guardar campos vacios!',
+                            })
+                            {% endif %}
+                            </script>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith%}
+                <div class="form-group mt-3 text-white">
+                    <label for="nombre">Nombre del paciente:</label>
+                    <input type="text" class="form-control" name="txtNombre" id="nombre" value={{ pac.2 }}>
+                </div>
+                <div class="form-group mt-3 text-white">
+                    <label for="nombre">Apellidos del paciente:</label>
+                    <input type="text" class="form-control" name="txtApellido" id="apellido" value={{  pac.3  }}>
+                </div>
+                <div class="form-group mt-3 text-white">
+                    <label for="fechaNacimiento">Fecha de nacimiento:</label>
+                    <input type="date" class="form-control" name="txtnacimiento" id="fechaNacimiento" value={{   pac.4   }}>
+                </div>
+                </div>
+                <div class="col-md-6">
+                <h2 class="text-center text-white">Datos Opcionales</h2>
+
+                <div class="form-group mt-3 text-white">
+                    <label for="enfermedades">Enfermedades Crónicas:</label>
+                    <select class="form-control" name="txtenfermedades" id="enfermedades" onchange="mostrarOtraEnfermedad()">
+                        <option value={{  pac.5  }} disabled selected>{{  pac.5  }}</option>
+                        <option value="Diabetes tipo 2">Diabetes tipo 2</option>
+                        <option value="Enfermedades cardiovasculares">Enfermedades cardiovasculares</option>
+                        <option value="Enfermedad pulmonar obstructiva crónica (EPOC)">Enfermedad pulmonar obstructiva crónica (EPOC)</option>
+                        <option value="Artritis">Artritis</option>
+                        <option value="Enfermedades neurológicas crónicas">Enfermedades neurológicas crónicas</option>
+                        <option value="Enfermedades autoinmunes">Enfermedades autoinmunes</option>
+                        <option value="Asma">Asma</option>
+                        <option value="Obesidad">Obesidad</option>
+                        <option value="Enfermedades renales crónicas">Enfermedades renales crónicas</option>
+                        <option value="Enfermedades mentales crónicas">Enfermedades mentales crónicas</option>
+                        <option value="Enfermedades del hígado crónicas">Enfermedades del hígado crónicas</option>
+                        <option value="Enfermedades inflamatorias intestinales">Enfermedades inflamatorias intestinales</option>
+                        <option value="Ninguna">Ninguna</option>
+                        <option value="Otra">Otra</option>
+                    </select>
+                </div>
+            
+                <div class="form-group mt-3 text-white" id="otraEnfermedad" style="display: none;">
+                    <label for="otraEnfermedadInput">Especifica otra enfermedad:</label>
+                    <input type="text" class="form-control" name="txtenfermedades_otro" id="otraEnfermedadInput">
+                </div>
+
+                <div class="form-group mt-3 text-white">
+                    <label for="alergias">Alergias:</label>
+                    <select class="form-control" name="txtalergias" id="alergias" onchange="mostrarOtroAlergia()">
+                        <option value={{  pac.6  }} disabled selected>{{  pac.6  }}</option>
+                        <option value="Polen">Alergia al polen</option>
+                        <option value="Cacahuete">Alergia al cacahuete</option>
+                        <option value="Marisco">Alergia al marisco</option>
+                        <option value="Huevo">Alergia al huevo</option>
+                        <option value="Gluten">Alergia al gluten</option>
+                        <option value="Látex">Alergia al látex</option>
+                        <option value="Ácaros del polvo">Alergia a los ácaros del polvo</option>
+                        <option value="Pelo de animales">Alergia al pelo de animales</option>
+                        <option value="Veneno de insectos">Alergia al veneno de insectos</option>
+                        <option value="Medicamentos">Alergia a medicamentos</option>
+                        <option value="Ninguna">Ninguna</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                </div>
+                
+                <div class="form-group mt-3 text-white" id="otraAlergia" style="display: none;">
+                    <label for="otraAlergiaInput">Especifica otra alergia:</label>
+                    <input type="text" class="form-control" name="txtalergias_otro" id="otraAlergiaInput">
+                </div>
+
+                <div class="form-group mt-3 text-white">
+                    <label for="antecedentes">Antecedentes Familiares:</label>
+                    <select class="form-control" name="txtantecedentes" id="antecedentes" onchange="mostrarOtroAntecedente()">
+                        <option value={{   pac.7   }} disabled selected>{{   pac.7   }}</option>
+                        <option value="Enfermedades cardíacas">Historia de enfermedades cardíacas</option>
+                        <option value="Diabetes">Historia de diabetes</option>
+                        <option value="Cáncer">Historia de cáncer</option>
+                        <option value="Enfermedades autoinmunes">Historia de enfermedades autoinmunes</option>
+                        <option value="Enfermedades neurológicas">Historia de enfermedades neurológicas</option>
+                        <option value="Trastornos mentales">Historia de trastornos mentales</option>
+                        <option value="Osteoporosis">Historia de osteoporosis</option>
+                        <option value="Enfermedades renales">Historia de enfermedades renales</option>
+                        <option value="Enfermedades respiratorias">Historia de enfermedades respiratorias</option>
+                        <option value="Alergias">Historia de alergias</option>
+                        <option value="Obesidad">Historia de obesidad</option>
+                        <option value="Enfermedades hereditarias">Historia de enfermedades hereditarias</option>
+                        <option value="Ninguno">Ninguno</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                </div>
+                
+                <div class="form-group mt-3 text-white" id="otroAntecedente" style="display: none;">
+                    <label for="otroAntecedenteInput">Especifica otro antecedente:</label>
+                    <input type="text" class="form-control" name="txtantecedentes_otro" id="otroAntecedenteInput">
+                </div>
+
+                <div class="text-center mt-3">
+                    <button class="btn btn-success" type="submit">Guardar Datos</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

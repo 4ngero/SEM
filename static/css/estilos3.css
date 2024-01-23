@@ -1,0 +1,16 @@
+body {
+    background-image: url("../imagenes/fondo2.jpg");
+    background-position: center center;
+    background-repeat:no-repeat;
+    background-attachment:fixed;
+    background-size:cover;
+    background-color:cornflowerblue;
+}
+.reloj{
+    color: #145289;
+    padding:20 px;
+    font-size: 30px;
+    text-align: center;
+}
+ 
+

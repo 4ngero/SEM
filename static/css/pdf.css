@@ -1,0 +1,39 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+}
+
+.header {
+    text-align: center;
+    background-color: #007bff;
+    padding: 20px;
+    color: white;
+}
+
+.section {
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.section h2 {
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+
+.patient-info {
+    margin: 5px 0;
+    font-size: 16px;
+}
+
+.footer {
+    background-color: #f0f0f0;
+    padding: 10px;
+    margin-top: 20px;
+}
