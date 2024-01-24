@@ -17,7 +17,7 @@ app.secret_key='mysecretapp'
 try: 
     app.config['MYSQL_HOST'] = 'localhost'
     app.config['MYSQL_USER'] ='root'
-    app.config['MYSQL_PASSWORD']='12345#1nL'
+    app.config['MYSQL_PASSWORD']=''
     app.config['MYSQL_DB']='bdconsultorio'
     app.secret_key = 'mysecretkey'
     mysql = MySQL(app)
@@ -66,10 +66,11 @@ def iniciosesion():
         contraseña = request.form['txtpass']
         
         if rfc == "" or contraseña == "":
-            flash('No se puede entrar con campos vacios')
+            #flash('No se puede entrar con campos vacios')
             #return render_template('login.html')
-            #session['rol'] = 1
+            session['rol'] = 1
             #return redirect(url_for('inicio'))
+            return redirect(url_for('inicio'))
         else:
             CS = mysql.connection.cursor()
             # Consulta para verificar las credenciales del usuario
@@ -112,13 +113,13 @@ def cerrarsesion():
     return redirect(url_for('login'))
 
 @app.route('/ConsultorioMedico')
-@login_required
+#@login_required
 def inicio():
     return render_template('inicio.html')
 
 # ---------------------------  Opciones administrador ---------------------------------------
 @app.route('/RegistroMedico')
-@login_required
+#@login_required
 def interfazM():
     if session:
         rol = session.get('rol')  # Obtenemos el rol de la sesión
@@ -131,7 +132,7 @@ def interfazM():
         return render_template('login.html')
 
 @app.route('/RegistrarMedico', methods=['POST'])
-@login_required
+#@login_required
 def registrarM():
     if request.method == 'POST':
         Vnombre= request.form['txtNombre']
@@ -163,7 +164,7 @@ def registrarM():
 
 
 @app.route('/ConsultarMedico')
-@login_required
+#@login_required
 def consulta():
     rol = session.get('rol')  # Obtenemos el rol de la sesión
     if rol == 1:
@@ -177,7 +178,7 @@ def consulta():
 
 #Consultamos por nombre-------------------------------------------------
 @app.route('/Consultanombre', methods=['POST'])
-@login_required
+#@login_required
 def consultanombre():
     Varbuscar= request.form['txtbuscar']
     CC= mysql.connection.cursor()
@@ -187,7 +188,7 @@ def consultanombre():
 
 # Ruta editar médico -------------------------------------------------
 @app.route('/editar/<id>')
-@login_required
+#@login_required
 def editarmedico(id):
     CSid = mysql.connection.cursor()
     CSid.execute('select * from medicos where id = %s', (id,))
@@ -195,7 +196,7 @@ def editarmedico(id):
     return render_template('amedico.html', med= Consid) 
 
 @app.route('/actualizar/<id>', methods=['POST'])
-@login_required
+#@login_required
 def actualizar(id):
     if request.method == 'POST':
         Vnombre= request.form['txtNombre']
@@ -254,7 +255,7 @@ def actualizar(id):
         
 # Eliminar médico -------------------------------------------------------
 @app.route('/borrar/<id>', methods=['POST'])
-@login_required
+#@login_required
 def eliminar(id):
     if request.method == 'POST':
         CSeli = mysql.connection.cursor()
@@ -267,7 +268,7 @@ def eliminar(id):
 
 #------------------------------------- Pacientes --------------------------------------------------------
 @app.route('/Expedientepaciente')
-@login_required
+#@login_required
 def introexpac():
     cedula_medico = session.get('cedula_medico')
     return render_template('expaciente.html', cedula_medico = cedula_medico)
@@ -275,7 +276,7 @@ def introexpac():
 global_edad = None 
 #---------------- Registrar pacientes ------------------------------------------------------------------
 @app.route('/Registropaciente', methods=['POST'])
-@login_required
+#@login_required
 def Registropaciente():
     if request.method == 'POST':
         cedula_medico = session.get('cedula_medico')
@@ -330,7 +331,7 @@ def Registropaciente():
             
 # Ruta Exploracion y diagnostigo ---------------------------------------------------
 @app.route('/Exploracionpacie')
-@login_required
+#@login_required
 def exploracionpacientes():
     cedula_medico = session.get('cedula_medico')
     CS = mysql.connection.cursor()
@@ -339,7 +340,7 @@ def exploracionpacientes():
     return render_template('cesxploracion.html', listapacientes = Consultas)
 
 @app.route('/Exploracionpac', methods=['POST'])
-@login_required
+#@login_required
 def exploracionpacie():
     Varbuscar= request.form['txtbuscar']
     CC= mysql.connection.cursor()
@@ -407,7 +408,7 @@ def consultacita():
     return render_template('consultacita.html', listapacientes = Consultas)
 
 @app.route('/Consultarcitapornombre', methods=['POST'])
-@login_required
+#@login_required
 def Buscarcitapornombre():
     Varbuscar= request.form['txtbuscar']
     CCs= mysql.connection.cursor()
@@ -416,7 +417,7 @@ def Buscarcitapornombre():
     return render_template('consultacita.html', listapacientes = consultapacs)
 
 @app.route('/Consultapacfecha', methods=['POST'])
-@login_required
+#@login_required
 def consultapacfecha():
     fecha_buscar = request.form['fechaBuscar']
     try:
@@ -429,11 +430,28 @@ def consultapacfecha():
     CC.execute('SELECT * FROM expacientes WHERE fecha = %s', (fecha_convertida,))
     consultapac = CC.fetchall()
     return render_template('consultacita.html', listapacientes=consultapac)
-    
+
+
+
+#-------------------- Cuestionario ----------------------
+
+@app.route('/Cuestionario')
+def cuestionario():
+    return render_template('cuestionario.html')
+
+@app.route('/procesar_cuestionario', methods=['POST'])
+def procesar_cuestionario():
+    respuestas = request.form.to_dict()
+    print(respuestas)
+    return "Cuestionario enviado correctamente"
+
+#-------------------- Cuestionario ----------------------
+
+
 
 #-------------------- Consultar paciente ------------------------------------------
 @app.route('/Consultapaciente')
-@login_required
+#@login_required
 def consultapaciente():
     cedula_medico = session.get('cedula_medico')
     CS = mysql.connection.cursor()
@@ -442,7 +460,7 @@ def consultapaciente():
     return render_template('cpacientes.html', listapacientes = Consulta)
 
 @app.route('/Consultapacnombre', methods=['POST'])
-@login_required
+#@login_required
 def consultapacnombre():
     Varbuscar= request.form['txtbuscar']
     CC= mysql.connection.cursor()
@@ -459,7 +477,7 @@ def editarpaciente(id):
     return render_template('apacientes.html', pac= Consultaid) 
 
 @app.route('/actualizarpaciente/<id>', methods=['POST'])
-@login_required
+#@login_required
 def actualizarpaciente(id):
     if request.method == 'POST':
         Vnombre = request.form['txtNombre']
@@ -522,7 +540,7 @@ def actualizarpaciente(id):
         
 # ------------------------------ Borrar -----------------------------------------------------------
 @app.route('/borrarpaciente/<id>', methods=['POST'])
-@login_required
+#@login_required
 def eliminarpaciente(id):
     if request.method == 'POST':
         CSeli = mysql.connection.cursor()
@@ -533,7 +551,7 @@ def eliminarpaciente(id):
     return jsonify({'message': 'error'})
 
 @app.route('/borrarexpaciente/<id>', methods=['POST'])
-@login_required
+#@login_required
 def eliminarexpaciente(id):
     if request.method == 'POST':
         CSeli = mysql.connection.cursor()
