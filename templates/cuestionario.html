@@ -128,19 +128,19 @@
             form.addEventListener('submit', function (event) {
                 event.preventDefault();
 
-                // Obtener respuestas del formulario
+                //Obtener respuestas del formulario
                 const respuestas = {};
                 for (const select of form.querySelectorAll('select')) {
                     respuestas[select.name] = select.value;
 
-                    // Verificar que haya una respuesta válida (Sí o No)
+                    //Verificar que haya una respuesta válida (Sí o No)
                     if (select.value !== 'si' && select.value !== 'no') {
                         alert('Por favor, responde todas las preguntas');
-                        return; // Salir de la función si hay una respuesta inválida
+                        return; //Salir de la función si hay una respuesta inválida
                     }
                 }
 
-                // Lógica para sumar valores de enfermedades
+                //Lógica para sumar valores de enfermedades
                 let valorGripe = 0;
                 let valorCrohn = 0;
                 let valorGingivitis = 0;
@@ -149,7 +149,7 @@
                     const respuesta = respuestas[pregunta];
 
                     if (respuesta === 'si') {
-                        // Asignar valores a las enfermedades según la lógica deseada
+                        //Asignar valores a las enfermedades según la lógica deseada
                         if (pregunta === 'pregunta1') {
                             valorGripe += 3;
                             valorCrohn += 2;
@@ -184,13 +184,13 @@
                     }
                 }
 
-                // Calcular porcentajes
+                //Calcular porcentajes
                 const total = valorGripe + valorCrohn + valorGingivitis;
                 const porcentajeGripe = (valorGripe / total) * 100;
                 const porcentajeCrohn = (valorCrohn / total) * 100;
                 const porcentajeGingivitis = (valorGingivitis / total) * 100;
 
-                // Determinar enfermedad principal y alternativa
+                //Determinar enfermedad principal y alternativa
                 let enfermedadPrincipal = '';
                 let enfermedadAlternativa = '';
 
@@ -205,11 +205,9 @@
                     enfermedadAlternativa = (porcentajeGripe >= porcentajeCrohn) ? 'Gripe' : 'Crohn';
                 }
 
-                // Mostrar resultados
+                //Mostrar resultados
                 enfermedadPrincipalP.textContent = `Enfermedad Principal: ${enfermedadPrincipal} (${porcentajeGripe.toFixed(2)}%)`;
                 enfermedadAlternativaP.textContent = `Enfermedad Alternativa: ${enfermedadAlternativa} (${porcentajeCrohn.toFixed(2)}%)`;
-
-                // Puedes ajustar el formato y estilo según tus preferencias
                 resultadosDiv.style.display = 'block';
             });
         });
