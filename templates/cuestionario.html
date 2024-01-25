@@ -189,6 +189,7 @@
                 const porcentajeGripe = (valorGripe / total) * 100;
                 const porcentajeCrohn = (valorCrohn / total) * 100;
                 const porcentajeGingivitis = (valorGingivitis / total) * 100;
+                console.log("Gripe: ", porcentajeGripe, "\nCrohn: ", porcentajeCrohn, "\nGingivitis: ",porcentajeGingivitis);
 
                 //Determinar enfermedad principal y alternativa
                 let enfermedadPrincipal = '';
@@ -206,8 +207,8 @@
                 }
 
                 //Mostrar resultados
-                enfermedadPrincipalP.textContent = `Enfermedad Principal: ${enfermedadPrincipal} (${porcentajeGripe.toFixed(2)}%)`;
-                enfermedadAlternativaP.textContent = `Enfermedad Alternativa: ${enfermedadAlternativa} (${porcentajeCrohn.toFixed(2)}%)`;
+                enfermedadPrincipalP.textContent = `Enfermedad Principal: ${enfermedadPrincipal} (${Math.max(porcentajeGripe, porcentajeCrohn, porcentajeGingivitis).toFixed(2)}%)`;
+                enfermedadAlternativaP.textContent = `Enfermedad Alternativa: ${enfermedadAlternativa} (${Math.min(porcentajeGripe, porcentajeCrohn, porcentajeGingivitis).toFixed(2)}%)`;
                 resultadosDiv.style.display = 'block';
             });
         });
