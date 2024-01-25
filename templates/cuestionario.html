@@ -1,16 +1,21 @@
 <!DOCTYPE html>
+
+<link rel="stylesheet" href="{{url_for('static', filename='css/estilosCuestionario.css')}}">
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cuestionario</title>
 </head>
+
 <body>
-    <h1>Cuestionario</h1>
     <form action="{{ url_for('procesar_cuestionario') }}" method="post" id="cuestionarioForm">
+        <h1>Cuestionario</h1>
         <label for="pregunta1">¿Has presenciado fiebre?</label>
         <select name="pregunta1">
+            <option value="--">--</option>
             <option value="si">Sí</option>
             <option value="no">No</option>
         </select>
@@ -18,6 +23,7 @@
 
         <label for="pregunta2">¿Sientes dolor en el abdomen?</label>
         <select name="pregunta2">
+            <option value="--">--</option>
             <option value="si">Sí</option>
             <option value="no">No</option>
         </select>
@@ -25,6 +31,7 @@
 
         <label for="pregunta3">¿Has tenido varias evacuaciones?</label>
         <select name="pregunta3">
+            <option value="--">--</option>
             <option value="si">Sí</option>
             <option value="no">No</option>
         </select>
@@ -32,6 +39,7 @@
 
         <label for="pregunta4">¿Has bajado de peso de forma sospechosa?</label>
         <select name="pregunta4">
+            <option value="--">--</option>
             <option value="si">Sí</option>
             <option value="no">No</option>
         </select>
@@ -39,6 +47,7 @@
 
         <label for="pregunta5">¿Tienes dolor en las encías?</label>
         <select name="pregunta5">
+            <option value="--">--</option>
             <option value="si">Sí</option>
             <option value="no">No</option>
         </select>
@@ -46,6 +55,7 @@
 
         <label for="pregunta6">¿Has sangrado de las encías?</label>
         <select name="pregunta6">
+            <option value="--">--</option>
             <option value="si">Sí</option>
             <option value="no">No</option>
         </select>
@@ -53,27 +63,31 @@
 
         <label for="pregunta7">¿Has tenido congestión nasal?</label>
         <select name="pregunta7">
+            <option value="--">--</option>
             <option value="si">Sí</option>
             <option value="no">No</option>
         </select>
         <br><br>
-        
+
         <label for="pregunta8">¿Has tenido dolor muscular?</label>
         <select name="pregunta8">
+            <option value="--">--</option>
             <option value="si">Sí</option>
             <option value="no">No</option>
         </select>
         <br><br>
-        
+
         <label for="pregunta9">¿Tienes problemas para tragar?</label>
         <select name="pregunta9">
+            <option value="--">--</option>
             <option value="si">Sí</option>
             <option value="no">No</option>
         </select>
         <br><br>
-        
+
         <label for="pregunta10">¿Has sentido náuseas?</label>
         <select name="pregunta10">
+            <option value="--">--</option>
             <option value="si">Sí</option>
             <option value="no">No</option>
         </select>
@@ -81,6 +95,7 @@
 
         <label for="pregunta11">¿Tienes mal aliento aún al lavarte los dientes?</label>
         <select name="pregunta11">
+            <option value="--">--</option>
             <option value="si">Sí</option>
             <option value="no">No</option>
         </select>
@@ -88,77 +103,117 @@
 
         <label for="pregunta12">¿Tienes las encías retraídas?</label>
         <select name="pregunta12">
+            <option value="--">--</option>
             <option value="si">Sí</option>
             <option value="no">No</option>
         </select>
         <br><br>
-        
+
         <input type="submit" value="Enviar">
     </form>
+
+    <div class="resultados" id="resultados">
+        <h2>Resultados</h2>
+        <p id="enfermedadPrincipal">Enfermedad Principal:</p>
+        <p id="enfermedadAlternativa">Enfermedad Alternativa:</p>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const form = document.getElementById('cuestionarioForm');
+            const resultadosDiv = document.getElementById('resultados');
+            const enfermedadPrincipalP = document.getElementById('enfermedadPrincipal');
+            const enfermedadAlternativaP = document.getElementById('enfermedadAlternativa');
 
             form.addEventListener('submit', function (event) {
                 event.preventDefault();
 
-                //Obtener respuestas del formulario
+                // Obtener respuestas del formulario
                 const respuestas = {};
                 for (const select of form.querySelectorAll('select')) {
                     respuestas[select.name] = select.value;
+
+                    // Verificar que haya una respuesta válida (Sí o No)
+                    if (select.value !== 'si' && select.value !== 'no') {
+                        alert('Por favor, responde todas las preguntas');
+                        return; // Salir de la función si hay una respuesta inválida
+                    }
                 }
 
-                //Lógica para sumar valores de enfermedades
+                // Lógica para sumar valores de enfermedades
                 let valorGripe = 0;
                 let valorCrohn = 0;
                 let valorGingivitis = 0;
 
                 for (const pregunta in respuestas) {
                     const respuesta = respuestas[pregunta];
+
                     if (respuesta === 'si') {
-                        //Asignar valores a las enfermedades según la lógica deseada
-                        if (pregunta === 'pregunta1'){
+                        // Asignar valores a las enfermedades según la lógica deseada
+                        if (pregunta === 'pregunta1') {
                             valorGripe += 3;
                             valorCrohn += 2;
                             valorGingivitis += 1;
-                        } else if (pregunta === 'pregunta2'){
+                        } else if (pregunta === 'pregunta2') {
                             valorGripe += 1;
                             valorCrohn += 3;
-                        } else if (pregunta === 'pregunta3'){
+                        } else if (pregunta === 'pregunta3') {
                             valorGripe += 1;
                             valorCrohn += 3;
-                        } else if (pregunta === 'pregunta4'){
+                        } else if (pregunta === 'pregunta4') {
                             valorCrohn += 1;
-                        } else if (pregunta === 'pregunta5'){
+                        } else if (pregunta === 'pregunta5') {
                             valorGingivitis += 2;
-                        } else if (pregunta === 'pregunta6'){
+                        } else if (pregunta === 'pregunta6') {
                             valorGingivitis += 3;
-                        } else if (pregunta === 'pregunta7'){
+                        } else if (pregunta === 'pregunta7') {
                             valorGripe += 3;
-                        } else if (pregunta === 'pregunta8'){
+                        } else if (pregunta === 'pregunta8') {
                             valorGripe += 2;
                             valorCrohn += 1;
-                        } else if (pregunta === 'pregunta9'){
+                        } else if (pregunta === 'pregunta9') {
                             valorCrohn += 1;
-                        } else if (pregunta === 'pregunta10'){
+                        } else if (pregunta === 'pregunta10') {
                             valorGripe += 2;
                             valorCrohn += 1;
-                        } else if (pregunta === 'pregunta11'){
-                            valorGingivitis += 3; //Recién agregado
-                        } else if (pregunta === 'pregunta12'){
-                            valorGingivitis += 3; //Recién agregado
+                        } else if (pregunta === 'pregunta11') {
+                            valorGingivitis += 3; // Recién agregado
+                        } else if (pregunta === 'pregunta12') {
+                            valorGingivitis += 3; // Recién agregado
                         }
                     }
                 }
 
-                //Aquí puedes hacer lo que necesites con los valores calculados
-                console.log('Valor Gripe:', valorGripe);
-                console.log('Valor Crohn:', valorCrohn);
-                console.log('Valor Gingivitis:', valorGingivitis);
+                // Calcular porcentajes
+                const total = valorGripe + valorCrohn + valorGingivitis;
+                const porcentajeGripe = (valorGripe / total) * 100;
+                const porcentajeCrohn = (valorCrohn / total) * 100;
+                const porcentajeGingivitis = (valorGingivitis / total) * 100;
+
+                // Determinar enfermedad principal y alternativa
+                let enfermedadPrincipal = '';
+                let enfermedadAlternativa = '';
+
+                if (porcentajeGripe >= porcentajeCrohn && porcentajeGripe >= porcentajeGingivitis) {
+                    enfermedadPrincipal = 'Gripe';
+                    enfermedadAlternativa = (porcentajeCrohn >= porcentajeGingivitis) ? 'Crohn' : 'Gingivitis';
+                } else if (porcentajeCrohn >= porcentajeGingivitis) {
+                    enfermedadPrincipal = 'Crohn';
+                    enfermedadAlternativa = (porcentajeGripe >= porcentajeGingivitis) ? 'Gripe' : 'Gingivitis';
+                } else {
+                    enfermedadPrincipal = 'Gingivitis';
+                    enfermedadAlternativa = (porcentajeGripe >= porcentajeCrohn) ? 'Gripe' : 'Crohn';
+                }
+
+                // Mostrar resultados
+                enfermedadPrincipalP.textContent = `Enfermedad Principal: ${enfermedadPrincipal} (${porcentajeGripe.toFixed(2)}%)`;
+                enfermedadAlternativaP.textContent = `Enfermedad Alternativa: ${enfermedadAlternativa} (${porcentajeCrohn.toFixed(2)}%)`;
+
+                // Puedes ajustar el formato y estilo según tus preferencias
+                resultadosDiv.style.display = 'block';
             });
         });
     </script>
 </body>
-</html>
 
+</html>
