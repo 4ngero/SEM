@@ -115,6 +115,7 @@
     <div class="resultados" id="resultados">
         <h2>Resultados</h2>
         <p id="enfermedadPrincipal">Enfermedad Principal:</p>
+        <input type="hidden" name="txtDiagnostico" id="txtDiagnostico_input" value="null">
         <p id="enfermedadAlternativa">Enfermedad Alternativa:</p>
     </div>
 
@@ -197,18 +198,31 @@
 
                 if (porcentajeGripe >= porcentajeCrohn && porcentajeGripe >= porcentajeGingivitis) {
                     enfermedadPrincipal = 'Gripe';
+                    enfermedadPrincipalP.textContent = `Enfermedad Principal: ${enfermedadPrincipal} (${porcentajeGripe.toFixed(2)}%)`;
+                    var txtDiagnostico = document.getElementById("txtDiagnostico_input");
+                    txtDiagnostico.value = enfermedadPrincipal;
                     enfermedadAlternativa = (porcentajeCrohn >= porcentajeGingivitis) ? 'Crohn' : 'Gingivitis';
+                    enfermedadAlternativaP.textContent =  `Enfermedad Alternativa: ${enfermedadAlternativa} (${Math.max(porcentajeCrohn, porcentajeGingivitis).toFixed(2)}%)`;
+
                 } else if (porcentajeCrohn >= porcentajeGingivitis) {
                     enfermedadPrincipal = 'Crohn';
+                    enfermedadPrincipalP.textContent = `Enfermedad Principal: ${enfermedadPrincipal} (${porcentajeCrohn.toFixed(2)}%)`;
+                    var txtDiagnostico = document.getElementById("txtDiagnostico_input");
+                    txtDiagnostico.value = enfermedadPrincipal;
                     enfermedadAlternativa = (porcentajeGripe >= porcentajeGingivitis) ? 'Gripe' : 'Gingivitis';
+                    enfermedadAlternativaP.textContent =  `Enfermedad Alternativa: ${enfermedadAlternativa} (${Math.max(porcentajeGripe, porcentajeGingivitis).toFixed(2)}%)`;
                 } else {
                     enfermedadPrincipal = 'Gingivitis';
+                    enfermedadPrincipalP.textContent = `Enfermedad Principal: ${enfermedadPrincipal} (${porcentajeGingivitis.toFixed(2)}%)`;
+                    var txtDiagnostico = document.getElementById("txtDiagnostico_input");
+                    txtDiagnostico.value = enfermedadPrincipal;
                     enfermedadAlternativa = (porcentajeGripe >= porcentajeCrohn) ? 'Gripe' : 'Crohn';
+                    enfermedadAlternativaP.textContent =  `Enfermedad Alternativa: ${enfermedadAlternativa} (${Math.max(porcentajeGripe, porcentajeCrohn).toFixed(2)}%)`;
                 }
 
                 //Mostrar resultados
-                enfermedadPrincipalP.textContent = `Enfermedad Principal: ${enfermedadPrincipal} (${Math.max(porcentajeGripe, porcentajeCrohn, porcentajeGingivitis).toFixed(2)}%)`;
-                enfermedadAlternativaP.textContent = `Enfermedad Alternativa: ${enfermedadAlternativa} (${Math.min(porcentajeGripe, porcentajeCrohn, porcentajeGingivitis).toFixed(2)}%)`;
+                // enfermedadPrincipalP.textContent = `Enfermedad Principal: ${enfermedadPrincipal} (${Math.max(porcentajeGripe, porcentajeCrohn, porcentajeGingivitis).toFixed(2)}%)`;
+                // enfermedadAlternativaP.textContent = `Enfermedad Alternativa: ${enfermedadAlternativa} (${Math.(porcentajeGripe, porcentajeCrohn, porcentajeGingivitis).toFixed(2)}%)`;
                 resultadosDiv.style.display = 'block';
             });
         });
