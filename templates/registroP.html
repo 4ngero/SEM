@@ -1,0 +1,63 @@
+{% extends 'plantilla.html' %}
+
+{% block customCSS %}
+  <link rel="stylesheet" href="{{url_for('static', filename='css/estilos3.css')}}">
+{% endblock %}
+
+{% block body %}
+    <div class="container mt-5 mb-4">
+        <div class="card">
+            <h2 class="card-header text-center">Registro de Paciente</h2>
+            <div class="card-body">
+                <form id="contactForm" method="post" action="/GuardarPaciente">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="matricula" class="form-label">Nombre:</label>
+                            <input type="text" class="form-control" id="matricula" name="txtNombre" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="nombre" class="form-label">Primer apellido:</label>
+                            <input type="text" class="form-control" id="nombre" name="txtPrimerAp" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="nombre" class="form-label">Segundo apellido:</label>
+                            <input type="text" class="form-control" id="nombre" name="txtSegundoAp" required>
+                        </div>
+                    </div>
+                    <div class="row py-2">
+                        <div class="col-md-4">
+                            <label for="fechaNacimiento" class="form-label">Fecha de Nacimiento:</label>
+                            <input type="date" class="form-control" id="fechaNacimiento" name="txtFechaNacimiento" aria-label="Fecha de Nacimiento" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="sexo" class="form-label">Sexo:</label>
+                            <select class="form-select py-2" id="sexo" name="txtSexo" aria-label="Sexo" required>
+                                <option selected>Seleccione uno</option>
+                                <option value="Hombre">Masculino</option>
+                                <option value="Mujer">Femenino</option>
+                                <option value="Prefiere no contestar">Prefiere no contestar</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="fechaAgenda" class="form-label">Agendar fecha de consulta:</label>
+                            <input type="date" class="form-control" id="fechaAgenda" name="txtFechaAgenda" aria-label="Fecha Agenda" required>
+                        </div>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-primary" type="submit"><i class="bi bi-floppy-fill"></i> Guardar Paciente</button>
+                    </div>
+                    {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                            <div class="alert alert-warning mt-3">
+                                <ul>
+                                    {% for message in messages %}
+                                        <li>{{ message }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

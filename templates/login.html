@@ -21,7 +21,7 @@
 
         </div>
         
-    <form class="formulario" action="/iniciosesion" method="POST">
+    <form class="formulario" action="/login" method="POST">
         <div class="texto-formulario">
             <h2>Bienvenido</h2>
             <p>Inicia sesión</p>
@@ -37,12 +37,12 @@
                 {% endif %}
             {% endwith%}
         <div class="input">
-            <label for="RFC">RFC de Médico</label>
+            <label for="RFC">Usuario</label>
             <input placeholder="RFC" type="text" name="txtusuario">
         </div>
         <div class="input">
             <label for="Contraseña">Contraseña</label>
-            <input placeholder="Ingresa tu contraseña" type="password" name="txtpass">
+            <input placeholder="Ingresa tu contraseña" type="password" name="txtpassword">
         </div>
         <div class="text-center mt-3">
             <button class="btn btn-primary" type="submit">Entrar</button>

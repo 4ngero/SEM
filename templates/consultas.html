@@ -1,0 +1,39 @@
+{% extends 'plantilla.html' %}
+
+{% block customCSS %}
+  <link rel="stylesheet" href="{{url_for('static', filename='css/estilos3.css')}}">
+{% endblock %}
+
+{% block body %}
+    <div class="container mt-5 mb-4">
+        <div class="card">
+            <h2 class="card-header text-center">Consultas agendadas</h2>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <!-- <th scope="col">#</th> -->
+                            <th scope="col">Nombre Completo</th>
+                            <th scope="col">Edad </th>
+                            <th scope="col">Consultorio</th>
+                            <th scope="col">Médico asignado</th>
+                            <th scope="col">Fecha de Consulta</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for paciente in datosP %}
+                        <tr>
+                            <!-- <th scope="row">1</th> -->
+                            <td>{{ paciente[0] }} {{ paciente[1] }} {{ paciente[2] }}</td>
+                            <td>{{ edades[loop.index0] }}</td>
+                            <td>{{ paciente[8] }}</td>
+                            <td>{{ paciente[5] }} {{ paciente[6] }} {{ paciente[7] }}</td>
+                            <td>{{ paciente[9] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>       
+{% endblock %}

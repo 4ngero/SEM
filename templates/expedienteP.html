@@ -1,0 +1,38 @@
+{% extends 'plantilla.html' %}
+
+{% block customCSS %}
+  <link rel="stylesheet" href="{{url_for('static', filename='css/estilos3.css')}}">
+{% endblock %}
+
+{% block body %}
+    <div class="container mt-5 mb-4">
+        <div class="card">
+            <h2 class="card-header text-center">Registro de Paciente</h2>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                          <!-- <th scope="col">#</th> -->
+                          <th scope="col">Nombre Completo</th>
+                          <th scope="col">Consultorio</th>
+                          <th scope="col">Atendido por:</th>
+                          <th scope="col">Diagnóstico</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            {% for paciente in datosP %}
+                            <tr>
+                              <!-- <th scope="row">1</th> -->
+                              <td>{{ paciente[1] }} {{ paciente[2] }} {{ paciente[3] }}</td>
+                              <td>Otto</td>
+                              <td>@mdo</td>
+                            </tr>
+                            {% endfor %}
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>       
+{% endblock %}

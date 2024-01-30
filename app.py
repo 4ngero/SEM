@@ -9,6 +9,7 @@ from reportlab.lib.styles import getSampleStyleSheet
 from io import BytesIO
 from xhtml2pdf import pisa
 from datetime import datetime
+import math
 
 
 
@@ -17,8 +18,8 @@ app.secret_key='mysecretapp'
 try: 
     app.config['MYSQL_HOST'] = 'localhost'
     app.config['MYSQL_USER'] ='root'
-    app.config['MYSQL_PASSWORD']='12345#1nL'
-    app.config['MYSQL_DB']='bdconsultorio'
+    app.config['MYSQL_PASSWORD']='cz757002'
+    app.config['MYSQL_DB']='SEM'
     app.secret_key = 'mysecretkey'
     mysql = MySQL(app)
     print("Conexion exitosa")
@@ -27,6 +28,236 @@ except Exception as ex:
 
 global_idpaciente = None
 #Ruta principal ------------------------------
+@app.route('/')
+def index():
+    return render_template('login.html')
+    
+@app.route('/inicio')
+def inicio():
+    if 'Usuario' in session:
+        usuario = session['Usuario']
+        return render_template('inicio.html', usuario=usuario)
+    
+    return render_template('inicio.html')
+
+@app.route('/login', methods = ["POST", "GET"])
+def login():
+    if request.method == "POST":
+        Vusuario = request.form['txtusuario']
+        Vcontraseña = request.form['txtpassword']
+        
+        CC = mysql.connection.cursor()
+        CC.execute(f"select usuario, passw from Personal where usuario = '{Vusuario}' and passw = '{Vcontraseña}'")
+        usuario = CC.fetchone()
+        CC.close()
+        
+        if usuario:
+            session['Usuario'] = usuario  # Establecer la variable de sesión 'usuario'
+            return render_template('inicio.html', usuario=usuario)  # Redirigir al usuario a la página de inicio
+        else:
+            return redirect(request.referrer)
+    
+@app.route('/RegistrarPaciente')
+def RegistrarPaciente():
+    return render_template('registroP.html')
+
+@app.route('/GuardarPaciente', methods = ["POST"])
+def GuardarPaciente():
+    if request.method == 'POST':
+        nombre = request.form['txtNombre']
+        primerAp = request.form['txtPrimerAp']
+        segundoAp = request.form['txtSegundoAp']
+        nacimiento = request.form['txtFechaNacimiento']
+        sexo = request.form['txtSexo']
+        f_consulta = request.form['txtFechaAgenda']
+        
+        timeActual = datetime.now()
+        year, month, day = map(int, nacimiento.split('-'))
+        fechaInt = datetime(year, month, day)
+        diferencia = (timeActual - fechaInt).days
+        diferenciaDate = diferencia / 365
+        
+        CC = mysql.connection.cursor()
+        
+        if diferenciaDate < 18:
+            CC.execute(f"select count(*) from Consultas \
+                inner join Consultorios on Consultorios.id=Consultas.id_consultorio \
+                where Consultas.fecha_consulta = '{f_consulta}' and Consultorios.id = 1")
+            disponibilidad = CC.fetchone()[0]
+            disponibilidad = int(disponibilidad)
+            if disponibilidad < 50:
+                CC.execute(f"insert into Pacientes(nombre, p_apellido, s_apellido, fecha_nacimiento, sexo) \
+                values('{nombre}', '{primerAp}', '{segundoAp}', '{nacimiento}', '{sexo}');")
+                mysql.connection.commit()
+            
+                CC.execute("select last_insert_id()")
+                id_paciente = CC.fetchone()[0]
+                
+                CC.execute(f"insert into Consultas(fecha_consulta, id_consultorio, id_paciente) values('{f_consulta}', 1,'{id_paciente}')")
+                mysql.connection.commit()
+                flash('Se ha registrado y agendado correctamente al paciente')
+                redirect(request.referrer)
+            
+            else:
+                flash('No hay consultas disponibles para este día')
+                redirect(request.referrer)
+            
+        if diferenciaDate >= 18 and diferenciaDate < 45:
+            CC.execute(f"select count(*) from Consultas \
+                inner join Consultorios on Consultorios.id=Consultas.id_consultorio \
+                where Consultas.fecha_consulta = '{f_consulta}' and Consultorios.id = 2")
+            disponibilidad = CC.fetchone()[0]
+            disponibilidad = int(disponibilidad)
+            if disponibilidad < 50:
+                CC.execute(f"insert into Pacientes(nombre, p_apellido, s_apellido, fecha_nacimiento, sexo) \
+                values('{nombre}', '{primerAp}', '{segundoAp}', '{nacimiento}', '{sexo}');")
+                mysql.connection.commit()
+            
+                CC.execute("select last_insert_id()")
+                id_paciente = CC.fetchone()[0]
+                
+                CC.execute(f"insert into Consultas(fecha_consulta, id_consultorio, id_paciente) values('{f_consulta}', 2,'{id_paciente}')")
+                mysql.connection.commit()
+                flash('Se ha registrado y agendado correctamente al paciente')
+                redirect(request.referrer)
+            
+            else:
+                flash('No hay consultas disponibles para este día')
+                redirect(request.referrer)
+                
+        if diferenciaDate >= 45:
+            CC.execute(f"select count(*) from Consultas \
+                inner join Consultorios on Consultorios.id=Consultas.id_consultorio \
+                where Consultas.fecha_consulta = '{f_consulta}' and Consultorios.id = 3")
+            disponibilidad = CC.fetchone()[0]
+            disponibilidad = int(disponibilidad)
+            if disponibilidad < 50:
+                CC.execute(f"insert into Pacientes(nombre, p_apellido, s_apellido, fecha_nacimiento, sexo) \
+                values('{nombre}', '{primerAp}', '{segundoAp}', '{nacimiento}', '{sexo}');")
+                mysql.connection.commit()
+            
+                CC.execute("select last_insert_id()")
+                id_paciente = CC.fetchone()[0]
+                
+                CC.execute(f"insert into Consultas(fecha_consulta, id_consultorio, id_paciente) values('{f_consulta}', 3,'{id_paciente}')")
+                mysql.connection.commit()
+                flash('Se ha registrado y agendado correctamente al paciente')
+                redirect(request.referrer)
+            
+            else:
+                flash('No hay consultas disponibles para este día')
+                redirect(request.referrer)
+            
+        
+        return redirect(request.referrer)
+        
+@app.route('/ExpedientePacientes')
+def ExpedientePacientes():
+    if 'Usuario' in session:
+        usuario = session['Usuario']
+        CC = mysql.connection.cursor()
+        CC.execute(f"select * from Pacientes")
+        datosP = CC.fetchall()
+        return render_template('expedienteP.html', datosP=datosP, usuario=usuario)
+
+@app.route('/Consultas')
+def Consultas():
+    if 'Usuario' in session:
+        usuario = session['Usuario']
+        CC = mysql.connection.cursor()
+        #consulta = 
+        # CC.execute("SELECT Pc.id_consultorio FROM Personal AS Pe \
+        #     INNER JOIN Personal_consultorios AS Pc ON Pe.id = Pc.id_personal \
+        #     WHERE Pe.usuario = %s", (usuario,))
+        # CC.execute("SELECT Pc.id_consultorio FROM Personal AS Pe INNER JOIN Personal_consultorios AS Pc ON Pe.id = Pc.id_personal WHERE Pe.usuario = '121037815'")
+        # consultorio = CC.fetchone()
+               
+        CC.execute(f"select P.nombre, P.p_apellido, P.s_apellido, P.fecha_nacimiento, P.sexo, Pe.nombre, Pe.p_apellido, Pe.s_apellido,\
+                Co.nombre, C.fecha_consulta from Pacientes as P \
+                inner join Consultas as C on P.id=C.id_paciente \
+                inner join Consultorios as Co on Co.id=C.id_consultorio \
+                inner join Personal_consultorios as Pc on Co.id=Pc.id_consultorio \
+                inner join Personal as Pe on Pe.id=Pc.id_personal \
+                ")#where Co.id = {consultorio}")
+        datosP = CC.fetchall()
+        fechas_nacimiento = [dato[3] for dato in datosP]
+        edades = []
+        for fecha_nacimiento in fechas_nacimiento:
+            timeActual = datetime.now()
+            fecha_nacimiento_dt = datetime.combine(fecha_nacimiento, datetime.min.time())
+            diferencia = (timeActual - fecha_nacimiento_dt).days
+            diferenciaAN = math.floor(diferencia / 365)
+            edades.append(diferenciaAN)
+        return render_template('consultas.html', datosP=datosP, edades=edades, usuario=usuario)
+        
+    return render_template('inicio.html')
+
+@app.route('/PacientesConsulta')
+def PacientesConsultas():
+    timeActual = datetime.now().date()
+    timeActual_format = timeActual.strftime('%Y-%m-%d')
+    CC = mysql.connection.cursor()
+    CC.execute(f"select P.id, P.nombre, P.p_apellido, P.s_apellido, P.fecha_nacimiento, P.sexo, Pe.nombre, Pe.p_apellido, Pe.s_apellido,\
+            Co.nombre, C.fecha_consulta from Pacientes as P \
+            inner join Consultas as C on P.id=C.id_paciente \
+            inner join Consultorios as Co on Co.id=C.id_consultorio \
+            inner join Personal_consultorios as Pc on Co.id=Pc.id_consultorio \
+            inner join Personal as Pe on Pe.id=Pc.id_personal \
+            where date(C.fecha_consulta) = '{timeActual_format}'")
+    datosP = CC.fetchall()
+    fechas_nacimiento = [dato[4] for dato in datosP]
+    edades = []
+    for fecha_nacimiento in fechas_nacimiento:
+        timeActual = datetime.now()
+        fecha_nacimiento_dt = datetime.combine(fecha_nacimiento, datetime.min.time())
+        diferencia = (timeActual - fecha_nacimiento_dt).days
+        diferenciaAN = math.floor(diferencia / 365)
+        edades.append(diferenciaAN)
+    
+    return render_template('consultasActivas.html', datosP=datosP, edades=edades)
+
+@app.route('/Diagnostico')
+def Diagnostico():
+    paciente_id = request.args.get('paciente_id')
+    CC = mysql.connection.cursor()
+    CC.execute(f"select id, nombre, p_apellido, s_apellido from Pacientes where id = '{paciente_id}'")
+    datosP = CC.fetchone()
+    return render_template('formDiagnostico.html', datosP=datosP)
+
+# @app.route('/procesar_cuestionario')
+# def procesar_cuestionario():
+#     #respuestas = request.form.to_dict()
+#     return redirect(request.referrer)
+
+@app.route('/GuardarDiagnostico', methods = ["POST"])
+def GuardarDiagnostico():
+    print('Hola')
+    if request.method == 'POST':
+        usuario = session['Usuario']
+        print('Hola')
+        paciente_id = request.form.get('paciente_id')
+        diagnostico = request.form.get('txtDiagnostico')
+        id_enfermedad = 0
+        if diagnostico == 'Gripe':
+            id_enfermedad = 1
+        if diagnostico == 'Crohn':
+            id_enfermedad = 2
+        else:
+            id_enfermedad = 3
+        
+       
+        timeActual = datetime.now().date()
+        timeActual_format = timeActual.strftime('%Y-%m-%d')
+        print(paciente_id, id_enfermedad, timeActual_format)
+        CC = mysql.connection.cursor()
+        CC.execute(f"insert into Diagnosticos(id_paciente, fecha_diagnostico, id_enfermedad)\
+            values ('{paciente_id}','{timeActual_format}', '{id_enfermedad}')")
+        mysql.connection.commit()
+        flash('Success','success')
+        return render_template('inicio.html', usuario=usuario)
+
+
+"""
 @app.route('/')
 def login():
     return render_template('login.html') 
@@ -593,7 +824,7 @@ def generareceta(id):
         buffer.close()
         return "Error generando el PDF"
 
-
+"""
 if __name__ == '__main__':
  #app.run(port=5800,debug=True)
  app.run(port=5800,debug=True)
